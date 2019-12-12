@@ -1,0 +1,17 @@
+out
+*.pyc
+*.tmp
+iotx-sdk-c_clone
+.gdbinit
+# source sight project files
+*.IAB
+*.IAD
+*.IMB
+*.IMD
+*.PFI
+*.PO
+*.PR
+*.PRI
+*.PS
+*.SearchResults
+*.WK3
