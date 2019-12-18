@@ -87,6 +87,6 @@ $(NAME)_SOURCES += beken/alios/mac_config.c
 $(NAME)_PREBUILT_LIBRARY += beken/ip/ip.a
 
 #Beken entry
-$(NAME)_COMPONENTS += platform/mcu/bk7231s/beken/alios/entry
+$(NAME)_COMPONENTS += platform/mcu/bk7231/beken/alios/entry
 
 $(NAME)_PREBUILT_LIBRARY += beken/beken.a
