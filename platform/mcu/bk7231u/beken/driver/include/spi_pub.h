@@ -25,14 +25,36 @@ enum
     CMD_SPI_TXINT_MODE,
     CMD_SPI_INIT_MSTEN,
     CMD_SPI_GET_BUSY,
-	CMD_SPI_SET_RX_CALLBACK,
-	CMD_SPI_SET_TX_NEED_WRITE_CALLBACK,
-	CMD_SPI_SET_TX_FINISH_CALLBACK,
-    CMD_SPI_DEINIT_MSTEN
+    CMD_SPI_SET_RX_CALLBACK,
+    CMD_SPI_SET_TX_NEED_WRITE_CALLBACK,
+    CMD_SPI_SET_TX_FINISH_CALLBACK,
+    CMD_SPI_DEINIT_MSTEN,
 };
+
+#define BK_SPI_DEBUG                1
+#include "uart_pub.h"
+#if BK_SPI_DEBUG
+#define BK_SPI_PRT               os_printf
+#define BK_SPI_WPRT              warning_prf
+#define BK_SPI_FATAL             fatal_prf
+#else
+#define BK_SPI_PRT               null_prf
+#define BK_SPI_WPRT              null_prf
+#define BK_SPIFATAL             null_prf
+#endif
 
 #define USE_SPI_GPIO_14_17          (0)
 #define USE_SPI_GPIO_30_33          (1)
+#define USE_SPI_GPIO_NUM            USE_SPI_GPIO_14_17
+#define SPI_FLASH_WP_GPIO_NUM       (GPIO18)
+#define SPI_FLASH_HOLD_GPIO_NUM     (GPIO19)
+
+#define SPI_DEF_CLK_HZ              (10 * 1000 * 1000)
+#define TX_FINISH_FLAG              (1 << 31)
+
+#define BK_SPI_CPOL                 0x01
+#define BK_SPI_CPHA                 0x02
+#define SPI_DEF_MODE                (~((BK_SPI_CPOL)|(BK_SPI_CPHA)))
 
 struct spi_message
 {
@@ -43,12 +65,23 @@ struct spi_message
     UINT32 recv_len;
 };
 
+typedef void (*spi_callback)(int port, void *param);
+struct spi_callback_des
+{
+    spi_callback callback;
+    void  *param;
+};
+
 /*******************************************************************************
 * Function Declarations
 *******************************************************************************/
+UINT32 spi_read_rxfifo(UINT8 *data);
+UINT32 spi_write_txfifo(UINT8 data);
+
 void spi_init(void);
 void spi_exit(void);
 void spi_isr(void);
+
 /*master api*/
 int bk_spi_master_init(UINT32 rate, UINT8 port, UINT32 mode);
 int bk_spi_master_xfer(struct spi_message *msg);
